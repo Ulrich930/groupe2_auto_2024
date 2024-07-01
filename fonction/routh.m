@@ -1,6 +1,6 @@
 %%% Critère de Routh %%%
 
-function[dpg, dpd] = routh(coefficients)
+function[stable, droite] = routh(coefficients)
     nbr_coeff = length(coefficients);                       % Longueur des coéfficients
     lignes = nbr_coeff;
     colonnes = round(nbr_coeff/2)+1;
@@ -31,10 +31,10 @@ function[dpg, dpd] = routh(coefficients)
             routh_array(iterLig, i) = ligneSuivante;
             
         end
-        verification = routh_array(iterLig, 1:colonnes) == zeros(colonnes)
+        verification = routh_array(iterLig) == zeros(1, colonnes)
         if sum(verification) == colonnes
             ligneSuivante2  = ligneNulle(routh_array(iterLig-1, 1:colonnes), iterLig, lignes);
-            routh_array(iterLig) = ligneSuivante2;
+            routh_array(iterLig, 1:colonnes-1) = ligneSuivante2;
         end
         if (routh_array(iterLig,1) == 0) && sum(verification)  ~= colonnes
             [dpg, dpd] = routhNulle(routh_array, iterLig, iterCol, lignes, colonnes);
@@ -45,8 +45,61 @@ function[dpg, dpd] = routh(coefficients)
     end
     if suivant == true
         dpg = routh_array(1:lignes, 1:colonnes-1);
+        dpd = [];
     end
 
+    signChdpg = 0;
+    signdpg = 1;
+    signChdpd = 0;
+    signdpd = 0;
+    stable = true;
+    droite = 0;
+    if isempty(dpd)
+        col_dpg = dpg(1:lignes,1)';
+        for i = 1:lignes
+            if col_dpg(i) < 0 && signdpg == 1
+                signdpg = 0;
+                signChdpg = signChdpg + 1;
+            end
+            if col_dpg(i) > 0 && signdpg == 0
+                signdpg = 1;
+                signChdpg = signChdpg + 1;
+            end
+        end
+        if signChdpg == 0
+            stable = true;
+            droite = 0;
+        end
+        if signChdpg > 0
+            stable = false;
+            droite = signChdpg;
+        end
+    end
+    if dpd ~= []
+        col_dpg = dpg(1:lignes,1)';
+        col_dpd = dpd(1:lignes,1)';
+        for i = 1:lignes
+            if col_dpg(i) < 0 && signdpg == 1
+                signdpg = 0;
+                signChdpg = signChdpg + 1;
+            end
+            if col_dpg(i) > 0 && signdpg == 0
+                signdpg = 1;
+                signChdpg = signChdpg + 1;
+            end
+
+            if col_dpd(i) < 0 && signdpd == 1
+                signdpd = 0;
+                signChdpd = signChdpd + 1;
+            end
+            if col_dpd(i) > 0 && signdpd == 0
+                signdpd = 1;
+                signChdpd = signChdpd + 1;
+            end
+        end  
+        
+    end
+    
 end
 
 % fonction de gérer le cas où un zéro dans la serie de routh
@@ -79,12 +132,13 @@ end
 
 % fonction de gérer le cas où un zéro dans la serie de routh
 function [ligneSuivante] = ligneNulle(routh, iterLigf, lignesf)
-    exposant = lignesf:-1:1 ;
+    exposant = lignesf-1:-1:0 ;
     if mod(iterLigf, 2 ) == 1
         exposant = cat(2, exposant, [0 0]);
     elseif mod(iterLigf, 2 ) == 0
         exposant = cat(2, exposant, [0]);
     end
-    exposant = exposant(iterLigf:2:0)
-    ligneSuivante = cat(2, exposant .* routh, [0]);
+    exposant = exposant(iterLigf-1:2:length(exposant));
+    routh = routh(1:(length(routh)-1));
+    ligneSuivante = exposant .* routh;
 end
