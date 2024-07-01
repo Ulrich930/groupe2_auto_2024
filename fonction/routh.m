@@ -1,0 +1,90 @@
+%%% Critère de Routh %%%
+
+function[dpg, dpd] = routh(coefficients)
+    nbr_coeff = length(coefficients);                       % Longueur des coéfficients
+    lignes = nbr_coeff;
+    colonnes = round(nbr_coeff/2)+1;
+    if mod(nbr_coeff, 2) == 1
+        coefficients = cat(2, coefficients, [0 0]);
+    elseif mod(nbr_coeff, 2) == 0
+        coefficients = cat(2, coefficients, [0]);
+    end 
+
+    % construction des vecteurs de routh initiaux
+    routh_array = zeros(lignes, colonnes);
+    routh_array(1,1:colonnes-1) = coefficients(1:2:nbr_coeff);
+    routh_array(2,1:colonnes-1) = coefficients(2:2:nbr_coeff);
+
+    
+    
+
+    % construction des autres lignes
+    %reste_lignes = 3:lignes;
+    iterCol = 1;
+    iterLig = 3;
+    suivant = true;
+    while iterLig < lignes+1 && suivant
+        
+        for i = iterCol:colonnes-1
+            ligneSuivante = -det([routh_array(iterLig-2,1) routh_array(iterLig-1, 1) ;
+            routh_array(iterLig-2,i + 1) routh_array(iterLig-1, i+1)])/(routh_array(iterLig-1,1));
+            routh_array(iterLig, i) = ligneSuivante;
+            
+        end
+        verification = routh_array(iterLig, 1:colonnes) == zeros(colonnes)
+        if sum(verification) == colonnes
+            ligneSuivante2  = ligneNulle(routh_array(iterLig-1, 1:colonnes), iterLig, lignes);
+            routh_array(iterLig) = ligneSuivante2;
+        end
+        if (routh_array(iterLig,1) == 0) && sum(verification)  ~= colonnes
+            [dpg, dpd] = routhNulle(routh_array, iterLig, iterCol, lignes, colonnes);
+            suivant = false;
+            break
+        end
+        iterLig = iterLig+1;
+    end
+    if suivant == true
+        dpg = routh_array(1:lignes, 1:colonnes-1);
+    end
+
+end
+
+% fonction de gérer le cas où un zéro dans la serie de routh
+function [routh_array1, routh_array2] = routhNulle(routh, iterLigf, iterColf, lignesf, colonnesf)
+        r1 = routh;
+        r2 = routh;
+        r1(iterLigf, 1) = 0.001;
+        r2(iterLigf, 1) = -0.001;
+        iterLig1 = iterLigf+1;
+        while iterLig1 < lignesf+1 
+            for i = iterColf:colonnesf-1
+                ligneSuivante1 = -det([r1(iterLig1-2,1) r1(iterLig1-1, 1) ;
+                r1(iterLig1-2,i + 1) r1(iterLig1-1, i+1)])/(r1(iterLig1-1,1));
+                r1(iterLig1, i) = ligneSuivante1;
+
+                ligneSuivante2 = -det([r2(iterLig1-2,1) r2(iterLig1-1, 1) ;
+                r2(iterLig1-2,i + 1) r2(iterLig1-1, i+1)])/(r2(iterLig1-1,1));
+                r2(iterLig1, i) = ligneSuivante2;
+            end
+            verification = sum(routh(iterLigf, 1:colonnesf) == zeros(colonnesf));
+        
+        if (sum(verification) == 4)
+            break
+        end
+            iterLig1 = iterLig1+1;
+        end
+        routh_array1 = r1;
+        routh_array2 = r2;
+end
+
+% fonction de gérer le cas où un zéro dans la serie de routh
+function [ligneSuivante] = ligneNulle(routh, iterLigf, lignesf)
+    exposant = lignesf:-1:1 ;
+    if mod(iterLigf, 2 ) == 1
+        exposant = cat(2, exposant, [0 0]);
+    elseif mod(iterLigf, 2 ) == 0
+        exposant = cat(2, exposant, [0]);
+    end
+    exposant = exposant(iterLigf:2:0)
+    ligneSuivante = cat(2, exposant .* routh, [0]);
+end
