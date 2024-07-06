@@ -6,7 +6,7 @@ function runperf(fct_transfert)
     
     if stable == 0
         disp('Le système est instable selon le critère de Routh');
-        fprintf('Il y a %g poles dans le demi-plan de gauche et %d dans le demi-plan de de droite\n', gauche, droite);
+        fprintf('Il y a %g poles dans le demi-plan de gauche et %d dans le demi-plan de de droite\n', droite, gauche);
     else
         disp('Le sytème est stable selon le critère de Routh')
         disp('')

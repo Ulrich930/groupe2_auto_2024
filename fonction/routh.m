@@ -15,7 +15,7 @@ function[stable, gauche, droite] = routh(coefficients)
     routh_array(1,1:colonnes-1) = coefficients(1:2:nbr_coeff);
     routh_array(2,1:colonnes-1) = coefficients(2:2:nbr_coeff);
 
-    
+    fprintf("Le matrice de routh",routh_array);
     
 
     % construction des autres lignes
@@ -31,7 +31,7 @@ function[stable, gauche, droite] = routh(coefficients)
             routh_array(iterLig, i) = ligneSuivante;
             
         end
-        verification = routh_array(iterLig) == zeros(1, colonnes);
+        verification = routh_array(iterLig) == zeros(1, colonnes)
         if sum(verification) == colonnes
             ligneSuivante2  = ligneNulle(routh_array(iterLig-1, 1:colonnes), iterLig, lignes);
             routh_array(iterLig, 1:colonnes-1) = ligneSuivante2;
@@ -130,7 +130,7 @@ function [routh_array1, routh_array2] = routhNulle(routh, iterLigf, iterColf, li
         routh_array2 = r2;
 end
 
-% fonction de gérer le cas où un zéro dans la serie de routh
+% fonction de gérer le cas où une ligne est nulle
 function [ligneSuivante] = ligneNulle(routh, iterLigf, lignesf)
     exposant = lignesf-1:-1:0 ;
     if mod(iterLigf, 2 ) == 1
