@@ -3,7 +3,9 @@ function[erpeeu, erperu] = performance(fct_transfert)
     % erpeeu : erreur en regime permanent entree echellon unite
     % erperu : erreur en regime permanent entree rampe unite
     % deno : polynome denominateur
+    % numo : polynome numerateur
     % T(s) = [Nn Nn-1 Nn-2 ...N2 N1 N0 ; Dn Dn-1 Dn-2 ...D2 D1 D0]
+
     nbr_coeff = length(fct_transfert)
     deno = fct_transfert(2,1:nbr_coeff)
     numo = fct_transfert(1,1:nbr_coeff);
@@ -25,7 +27,6 @@ function[erpeeu, erperu] = performance(fct_transfert)
     elseif (D0==0) && (D1==0)
         erpeeu = 0;
         erperu = 0;
-
     end
 end
 
