@@ -1,6 +1,6 @@
 %%% Critère de Routh %%%
 
-function[stable, droite, gauche] = routh(coefficients)
+function[stable, gauche, droite] = routh(coefficients)
     nbr_coeff = length(coefficients);                       % Longueur des coéfficients
     lignes = nbr_coeff;
     colonnes = round(nbr_coeff/2)+1;
