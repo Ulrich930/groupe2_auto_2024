@@ -1,0 +1,26 @@
+%%%%   UNIVERSITE DE KINSHASA       %%%%
+%%%%   FACULTE POLYTECHNIQUE        %%%%
+%%%%   COURS D'AUTOMATIQUE LINEAIRE %%%%
+%%%%   PROJET N°1 GROUPE 1          %%%%
+
+%%%%  PROF GUY WALONGO, titulaire du cours
+%%%%  Programme principal du projet
+
+%% Importer les focntions
+addpath('fonction\')
+
+
+function [x, y] = main(fct_transfert)
+    % fct_transfert point de départ du projet
+    %% Critère de Routh
+    % Tester la stabilité d'un système via sa fonction de transfer
+    stabilite = routh(fct_transfert(2));
+    if stabilite(1) ~= 0
+        disp('Le système est instable selon le critère de Routh')
+        disp('Il y a ', stabilite(2), [' poles dans le demi-plan de droite' ...
+            'et ', stabilite(3), 'dans le demi-plan de dgauche'])
+    else
+        disp('Le sytème est stable selon le critère de Routh')
+    end
+end
+

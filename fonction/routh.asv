@@ -1,13 +1,13 @@
 %%% Critère de Routh %%%
 
-function[stable, droite, gauche] = routh(coefficients)
+function[stable, droite] = routh(coefficients)
     nbr_coeff = length(coefficients);                       % Longueur des coéfficients
     lignes = nbr_coeff;
     colonnes = round(nbr_coeff/2)+1;
     if mod(nbr_coeff, 2) == 1
         coefficients = cat(2, coefficients, [0 0]);
     elseif mod(nbr_coeff, 2) == 0
-        coefficients = cat(2, coefficients, 0);
+        coefficients = cat(2, coefficients, [0]);
     end 
 
     % construction des vecteurs de routh initiaux
@@ -54,7 +54,6 @@ function[stable, droite, gauche] = routh(coefficients)
     signdpd = 0;
     stable = true;
     droite = 0;
-    gauche = lignes - 1;
     if isempty(dpd)
         col_dpg = dpg(1:lignes,1)';
         for i = 1:lignes
@@ -74,7 +73,6 @@ function[stable, droite, gauche] = routh(coefficients)
         if signChdpg > 0
             stable = false;
             droite = signChdpg;
-            gauche = gauche - droite;
         end
     end
     if  ~isempty(dpd)
@@ -99,7 +97,9 @@ function[stable, droite, gauche] = routh(coefficients)
                 signChdpd = signChdpd + 1;
             end
         end  
-    end    
+        
+    end
+    
 end
 
 % fonction de gérer le cas où un zéro dans la serie de routh
@@ -136,7 +136,7 @@ function [ligneSuivante] = ligneNulle(routh, iterLigf, lignesf)
     if mod(iterLigf, 2 ) == 1
         exposant = cat(2, exposant, [0 0]);
     elseif mod(iterLigf, 2 ) == 0
-        exposant = cat(2, exposant, 0);
+        exposant = cat(2, exposant, [0]);
     end
     exposant = exposant(iterLigf-1:2:length(exposant));
     routh = routh(1:(length(routh)-1));
