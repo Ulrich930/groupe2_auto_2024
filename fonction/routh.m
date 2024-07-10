@@ -5,17 +5,19 @@ function[stable, gauche, droite] = routh(coefficients)
     lignes = nbr_coeff;
     colonnes = round(nbr_coeff/2)+1;
     if mod(nbr_coeff, 2) == 1
-        coefficients = cat(2, coefficients, [0 0]);
+        coefficients = cat(2, coefficients, [0 0 0]);
+        % construction des vecteurs de routh initiaux
+        routh_array(1,1:colonnes) = coefficients(1:2:nbr_coeff+3);
+        routh_array(2,1:colonnes) = coefficients(2:2:nbr_coeff+3);
     elseif mod(nbr_coeff, 2) == 0
-        coefficients = cat(2, coefficients, 0);
+        coefficients = cat(2, coefficients, [0 0]);
+        routh_array(1,1:colonnes) = coefficients(1:2:nbr_coeff+2);
+        routh_array(2,1:colonnes) = coefficients(2:2:nbr_coeff+2);
     end 
 
-    % construction des vecteurs de routh initiaux
-    routh_array = zeros(lignes, colonnes);
-    routh_array(1,1:colonnes-1) = coefficients(1:2:nbr_coeff);
-    routh_array(2,1:colonnes-1) = coefficients(2:2:nbr_coeff);
+    
 
-    fprintf("Le matrice de routh",routh_array);
+    %fprintf("Le matrice de routh",routh_array);
     
 
     % construction des autres lignes
@@ -28,15 +30,18 @@ function[stable, gauche, droite] = routh(coefficients)
         for i = iterCol:colonnes-1
             ligneSuivante = -det([routh_array(iterLig-2,1) routh_array(iterLig-1, 1) ;
             routh_array(iterLig-2,i + 1) routh_array(iterLig-1, i+1)])/(routh_array(iterLig-1,1));
+            
             routh_array(iterLig, i) = ligneSuivante;
             
+            
         end
-        verification = routh_array(iterLig) == zeros(1, colonnes)
+        verification = routh_array(iterLig, 1:colonnes) == zeros(1, colonnes);
         if sum(verification) == colonnes
             ligneSuivante2  = ligneNulle(routh_array(iterLig-1, 1:colonnes), iterLig, lignes);
             routh_array(iterLig, 1:colonnes-1) = ligneSuivante2;
         end
         if (routh_array(iterLig,1) == 0) && sum(verification)  ~= colonnes
+            
             [dpg, dpd] = routhNulle(routh_array, iterLig, iterCol, lignes, colonnes);
             suivant = false;
             break
@@ -51,7 +56,7 @@ function[stable, gauche, droite] = routh(coefficients)
     signChdpg = 0;
     signdpg = 1;
     signChdpd = 0;
-    signdpd = 0;
+    signdpd = 1;
     stable = true;
     droite = 0;
     gauche = lignes - 1;
@@ -98,7 +103,21 @@ function[stable, gauche, droite] = routh(coefficients)
                 signdpd = 1;
                 signChdpd = signChdpd + 1;
             end
-        end  
+        end 
+
+        if signChdpd == 0 && signChdpg == 0
+            stable = true;
+            droite = 0;
+        end
+        if signChdpd > 0 || signChdpg > 0
+            stable = false;
+            droite = 0;
+            if signChdpd == signChdpg
+                stable = false;
+                droite = signChdpg;
+                gauche = gauche - droite; 
+            end
+        end
     end    
 end
 
@@ -121,9 +140,9 @@ function [routh_array1, routh_array2] = routhNulle(routh, iterLigf, iterColf, li
             end
             verification = sum(routh(iterLigf, 1:colonnesf) == zeros(colonnesf));
         
-        if (sum(verification) == 4)
-            break
-        end
+            if (sum(verification) == 4)
+                break
+            end
             iterLig1 = iterLig1+1;
         end
         routh_array1 = r1;
