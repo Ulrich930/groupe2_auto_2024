@@ -55,6 +55,32 @@ function[reponseInd, psi] = reponse(fct_transfert, type)
     end
 end
 
+function[tmonte, tetabliss, dmax] = constantes(fct_transfert)
+	taille = length(fct_transfert)
+	tau = 1/fct_transfert(2,end)
+	gain = fct_transfert(1,end)
+	if (taille==2)
+	
+		tmonte = 2.2*tau
+		tetabliss = 4*tau
+		dmax = gain/fct_transfert(2,end)
+		end
+	elseif (taille ==3)
+		wncarre = fct_transfert(1,end)
+		a = fct_transfert(2,2)
+		amorti = a/sqrt(wncarre)
+		
+		tmonte = 1.8 / sqrt(wncarre)
+		tetabliss = 8/a 
+		dmax = exp(-amorti*pi/sqrt(1-amorti^2))*100
+		
+		end
+		
+	
+
+
+end
+
 
 
     
