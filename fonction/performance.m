@@ -35,6 +35,9 @@ function[erpeeu, erperu, reponseInd, psi] = performance(fct_transfert)
     [reponseInd, psi] = reponse(fct_transfert, type);
 end
 
+
+%Fonction pour la reponse indicielle
+
 function[reponseInd, psi] = reponse(fct_transfert, type)
     psi = Inf;
     syms t
@@ -55,6 +58,8 @@ function[reponseInd, psi] = reponse(fct_transfert, type)
     end
 end
 
+
+% Fonction pour caclculer les constantes de temps pour la question c
 function[tmonte, tetabliss, dmax] = constantes(fct_transfert)
 	taille = length(fct_transfert)
 	tau = 1/fct_transfert(2,end)
