@@ -5,7 +5,7 @@ function[erpeeu, erperu, reponseInd, psi] = performance(fct_transfert)
     % erperu : erreur en regime permanent entree rampe pente unite
     % deno : polynome denominateur
     % numo : polynome numerateur
-    % T(s) = [Nn Nn-1 Nn-2 ...N2 N1 N0 ; Dn Dn-1 Dn-2 ...D2 D1 D0]
+    % G(s) = [Nn Nn-1 Nn-2 ...N2 N1 N0 ; Dn Dn-1 Dn-2 ...D2 D1 D0]
     % reponseInd : fonction de t
 
     nbr_coeff = length(fct_transfert);
