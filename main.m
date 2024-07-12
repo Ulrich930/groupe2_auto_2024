@@ -4,6 +4,7 @@
 %%%%   PROJET N°1 GROUPE 1          %%%%
 
 %%%%  PROF GUY WALONGO, titulaire du cours
+%%%%  ASSISTANT LIONNEL MAZUBA, Tps
 %%%%  Programme principal du projet
 
 %% Importer les focntions
