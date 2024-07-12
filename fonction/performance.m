@@ -50,13 +50,18 @@ end
 
 % Lorsque nous avons des formes simples on utilise la fonction simple
 function[reponseInd, psi] = simple(fct_transfert)
+    % fonction nommée 'simple' qui prend en entrée 'fct_transfert'
+    % et retourne 'reponseInd' et 'psi'.
     syms t
     psi = Inf;
+    % Initialisation de  psi à l’infini.
     if length(fct_transfert) == 2
         y = fct_transfert(1,2)/fct_transfert(2, 2) * (1 - exp(-fct_transfert(2, 2)*t));
+        % Calcule de  y en utilisant les éléments de fct_transfert et une fonction exponentielle.
         reponseInd = y;
     elseif length(fct_transfert) == 3
         gain = fct_transfert(1,3)/fct_transfert(2,end);
+        % Calcule le gain en utilisant les éléments de fct_transfert
         fct_transfert(1, end) = fct_transfert(2,end);
         omega = sqrt(fct_transfert(1, end));
         psi = fct_transfert(2,end-1)/(omega * 2);
@@ -69,6 +74,7 @@ end
 function [tau, tr, te, depMax] = const(fct)
     syms t;
     vf = limit(fct, t, Inf);
+    % Calcule de la limite de fct lorsque t tend vers l’infini, stockée dans vf
     VCT = 63/100*vf;
     VTM1 = 0.1*vf;
     VTM2 = 0.9*vf;
