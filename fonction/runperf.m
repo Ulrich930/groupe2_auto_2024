@@ -1,4 +1,10 @@
-function runperf(fct_transfert, pas, limite)
+function runperf(fct_transfert, limite, pas)
+    if nargin < 3
+        pas = 5000;
+        if nargin < 2
+            limite = 5;
+        end
+    end
     syms t
     % fct_transfert point de départ du projet
     %% Critère de Routh
@@ -12,7 +18,7 @@ function runperf(fct_transfert, pas, limite)
         disp('Le sytème est stable selon le critère de Routh')
         disp('')
         disp('Nous pouvons passer à la prochaine étape')
-        [erpeeu, erperu, reponseInd, psi, tau, tr, te, depMax, p, vf, non_amortie] = performance(fct_transfert, pas, limite);
+        [erpeeu, erperu, reponseInd, psi, tau, tr, te, depMax, p, vf, non_amortie] = performance(fct_transfert, limite, pas);
         if tau == Inf
             disp("Essayer de changer les valeurs du pas ou du temps d'études du système")
         elseif non_amortie == 0
